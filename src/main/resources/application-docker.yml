@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:mysql://db/demo
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: always
+      encoding: utf-8
+  jackson:
+    time-zone: Asia/Tokyo
+  mail:
+    host: mail
+    port: 1025
+  messages:
+    basename: messages, ValidationMessages

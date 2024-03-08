@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/layout}"
+>
+  <head>
+    <meta charset="UTF-8" th:remove="tag" />
+  </head>
+  <body>
+    <div layout:fragment="content">
+      <h1 class="page-header">マイイベント一覧</h1>
+      <table class="table table-striped" cellpadding="0" cellspacing="0">
+        <thead class="bg-primary text-white">
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">イベント名</th>
+            <th scope="col">最大参加者数</th>
+            <th scope="col">現在の参加者数</th>
+            <th scope="col">カテゴリ</th>
+            <th scope="col">管理ユーザ</th>
+            <th scope="col">作成日時</th>
+            <th scope="col">更新日時</th>
+            <th scope="col" class="actions">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="event : ${events}">
+            <td th:text="${event.id}"></td>
+            <td th:text="${event.name}"></td>
+            <td th:text="${event.maxParticipant}"></td>
+            <td th:text="${event.users.size}"></td>
+            <td th:text="${event.category.name}"></td>
+            <td th:text="${event.user.email}"></td>
+            <td
+              th:text="${#temporals.format(event.createdAt, 'yyyy年MM月dd日HH時mm分ss秒')}"
+            ></td>
+            <td
+              th:text="${#temporals.format(event.modifiedAt, 'yyyy年MM月dd日HH時mm分ss秒')}"
+            ></td>
+            <td class="actions text-nowrap">
+              <a
+                th:href="@{/admin/events/edit/{id}(id=${event.id})}"
+                class="btn btn-info"
+                >編集</a
+              >
+              <a
+                th:href="@{/admin/events/delete/{id}(id=${event.id})}"
+                class="btn btn-danger"
+                >削除</a
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>
