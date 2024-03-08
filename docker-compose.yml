@@ -1,0 +1,29 @@
+services:
+  app:
+    image: eclipse-temurin:21-jdk-jammy
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/app
+    working_dir: /app
+    tty: true
+    command: ./mvnw spring-boot:run
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: mysql:8.3
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: demo
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Tokyo
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "root", "-proot"]
+      timeout: 20s
+      retries: 10
+    volumes:
+      - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf

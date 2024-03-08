@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/layout}"
+>
+  <head>
+    <meta charset="UTF-8" th:remove="tag" />
+  </head>
+  <body>
+    <div layout:fragment="content">
+      <h1>受注表示</h1>
+      <table class="table table-striped mt-4">
+        <thead class="bg-primary text-white">
+          <tr>
+            <th>ID</th>
+            <th>商品名</th>
+            <th>顧客名</th>
+            <th>作成日時</th>
+            <th>更新日時</th>
+            <th scope="col" class="actions">アクション</th>
+          </tr>
+        </thead>
+        <tbody>
+          <td th:text="${order.id}"></td>
+          <td th:text="${order.name}"></td>
+          <td th:text="${order.customer.name}"></td>
+          <td
+            th:text="${#dates.format(order.createdAt, 'yyyy年MM月dd日HH時mm分ss秒')}"
+          ></td>
+          <td
+            th:text="${#dates.format(order.modifiedAt, 'yyyy年MM月dd日HH時mm分ss秒')}"
+          ></td>
+          <td class="actions text-nowrap">
+            <a
+              th:href="@{/admin/orders/edit/{id}(id=${id})}"
+              class="btn btn-primary"
+              >編集</a
+            >
+          </td>
+        </tbody>
+      </table>
+      <h1>受注詳細</h1>
+      <a
+        th:href="@{/admin/orderdetails/create/{id}(id=${order.id})}"
+        class="btn btn-primary"
+        >新規作成</a
+      >
+      <table class="table table-striped mt-4">
+        <thead class="bg-primary text-white">
+          <tr>
+            <th>ID</th>
+            <th>商品名</th>
+            <th>値段</th>
+            <th>個数</th>
+            <th>合計</th>
+            <th>作成日時</th>
+            <th>更新日時</th>
+            <th scope="col" class="actions">アクション</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="detail: ${order.orderDetails}">
+            <td th:text="${detail.id}"></td>
+            <td th:text="${detail.product.name}"></td>
+            <td th:text="${detail.product.price}"></td>
+            <td th:text="${detail.unit}"></td>
+            <td th:text="${detail.product.price} * ${detail.unit}"></td>
+            <td
+              th:text="${#dates.format(detail.createdAt, 'yyyy年MM月dd日HH時mm分ss秒')}"
+            ></td>
+            <td
+              th:text="${#dates.format(detail.modifiedAt, 'yyyy年MM月dd日HH時mm分ss秒')}"
+            ></td>
+            <td class="actions text-nowrap">
+              <a
+                th:href="@{/admin/orderdetails/edit/{id}(id=${detail.id})}"
+                class="btn btn-primary"
+                >編集</a
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>
