@@ -38,7 +38,7 @@ public class EventUsersController {
                 return "redirect:/admin/events/view/" + eventId;
             }
 
-            if (isJoinEvent(event, user)) {
+            if (event.isJoin(user)) {
                 flash = new FlashData().danger("既に参加しています");
                 ra.addFlashAttribute("flash", flash);
                 return "redirect:/admin/events/view/" + eventId;
@@ -62,7 +62,7 @@ public class EventUsersController {
         FlashData flash;
         try {
             Event event = eventService.findById(eventId);
-            if (!isJoinEvent(event, user)) {
+            if (!event.isJoin(user)) {
                 flash = new FlashData().danger("対象イベントに参加していません");
                 ra.addFlashAttribute("flash", flash);
                 return "redirect:/admin/events/view/" + eventId;
@@ -79,14 +79,4 @@ public class EventUsersController {
         ra.addFlashAttribute("flash", flash);
         return "redirect:/admin/events/view/" + eventId;
     }
-
-    public Boolean isJoinEvent(Event event, User user) {
-        for (User v : event.getUsers()) {
-            if (v.getId().equals(user.getId())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 }
