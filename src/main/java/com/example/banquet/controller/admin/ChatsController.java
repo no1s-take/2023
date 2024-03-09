@@ -50,7 +50,7 @@ public class ChatsController {
 
             model.addAttribute("user", user);
             model.addAttribute("event", eventService.findById(eventId));
-            model.addAttribute("chats", chatService.findAll());
+            model.addAttribute("chats", chatService.findAllByOrderByCreatedAt());
         } catch (Exception e) {
             FlashData flash = new FlashData().danger("処理中にエラーが発生しました");
             ra.addFlashAttribute("flash", flash);

@@ -34,4 +34,8 @@ public class ChatService implements BaseService<Chat> {
     public void deleteById(Integer id) {
         chatDao.deleteById(id);
     }
+
+    public List<Chat> findAllByOrderByCreatedAt() {
+        return chatDao.findAllByOrderByCreatedAt();
+    }
 }

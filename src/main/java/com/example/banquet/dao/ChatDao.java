@@ -39,4 +39,8 @@ public class ChatDao implements BaseDao<Chat> {
             System.out.println("do nothing");
         }
     }
+
+    public List<Chat> findAllByOrderByCreatedAt() {
+        return repository.findAllByOrderByCreatedAt();
+    }
 }
