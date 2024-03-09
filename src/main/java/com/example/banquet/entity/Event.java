@@ -60,4 +60,13 @@ public class Event extends AbstractEntity {
     @JoinTable(name = "event_users", joinColumns = @JoinColumn(name = "event_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> users;
+
+    public Boolean isJoin(User user) {
+        for (User v : users) {
+            if (v.getId().equals(user.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
