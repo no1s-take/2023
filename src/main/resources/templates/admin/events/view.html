@@ -74,8 +74,8 @@
           </tr>
         </tbody>
       </table>
-      <div>
-        <th:block th:if="${true}">
+      <div class="text-center container-fluid">
+        <th:block th:unless="${isJoin}">
           <form
             th:action="@{/admin/eventusers/create/{id}(id=${event.id})}"
             method="post"
@@ -83,7 +83,7 @@
             <input class="mt-3 btn btn-primary" type="submit" th:value="参加" />
           </form>
         </th:block>
-        <th:block th:unless="${false}">
+        <th:block th:if="${isJoin}">
           <a
             th:href="@{/admin/chats/talk/{id}(id=${event.id})}"
             class="btn btn-primary"

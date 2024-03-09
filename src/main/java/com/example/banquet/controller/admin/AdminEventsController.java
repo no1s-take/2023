@@ -46,9 +46,12 @@ public class AdminEventsController {
     }
 
     @GetMapping("/view/{id}")
-    public String view(@PathVariable Integer id, Model model, RedirectAttributes ra) {
+    public String view(@PathVariable Integer id, Model model, RedirectAttributes ra,
+            @AuthenticationPrincipal User user) {
         try {
-            model.addAttribute("event", eventService.findById(id));
+            Event event = eventService.findById(id);
+            model.addAttribute("isJoin", event.isJoin(user));
+            model.addAttribute("event", event);
         } catch (Exception e) {
             FlashData flash = new FlashData().danger("該当データがありません");
             ra.addFlashAttribute("flash", flash);
