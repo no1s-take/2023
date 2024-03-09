@@ -32,12 +32,11 @@
         <input class="form-control" type="text" th:field="*{maxParticipant}" />
         <label for="customer">カテゴリ</label>
         <select class="form-control" th:field="*{category}">
-          <th:block th:each="category : ${@categoryRepository.findAll()}">
-            <option
-              th:value="${category.id}"
-              th:text="${category.name}"
-            ></option>
-          </th:block>
+          <option
+            th:each="category : ${@categoryRepository.findAll()}"
+            th:value="${category.id}"
+            th:text="${category.name}"
+          ></option>
         </select>
         <label for="customer">ユーザー</label>
         <select class="form-control" th:attr="name='user'">
