@@ -1,7 +1,7 @@
 package com.example.banquet.controller.admin;
 
 import org.springframework.core.Conventions;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,7 +18,6 @@ import com.example.banquet.entity.User;
 import com.example.banquet.service.ChatService;
 import com.example.banquet.service.EventService;
 import com.example.banquet.service.EventUserService;
-import com.example.banquet.service.UserService;
 
 
 @Controller
@@ -28,26 +27,22 @@ public class ChatsController {
     private final ChatService chatService;
     private final EventService eventService;
     private final EventUserService eventUserService;
-    private final UserService userService;
 
     public ChatsController(ChatService chatService, EventService eventService,
-            EventUserService eventUserService, UserService userService) {
+            EventUserService eventUserService) {
         this.chatService = chatService;
         this.eventService = eventService;
         this.eventUserService = eventUserService;
-        this.userService = userService;
     }
 
     @GetMapping("/talk/{eventId}")
-    public String talk(@PathVariable Integer eventId, Model model, RedirectAttributes ra) {
+    public String talk(@PathVariable Integer eventId, Model model, RedirectAttributes ra,
+            @AuthenticationPrincipal User user) {
         if (!model.containsAttribute(BindingResult.MODEL_KEY_PREFIX + "chat")) {
             model.addAttribute("chat", new Chat());
         }
 
         try {
-            User user = userService
-                    .findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-
             model.addAttribute("user", user);
             model.addAttribute("event", eventService.findById(eventId));
             model.addAttribute("chats", chatService.findAllByOrderByCreatedAt());
@@ -61,7 +56,7 @@ public class ChatsController {
 
     @PostMapping(value = "/create")
     public String register(@Validated Chat chat, BindingResult result, Model model,
-            RedirectAttributes ra) {
+            RedirectAttributes ra, @AuthenticationPrincipal User user) {
         try {
             if (result.hasErrors()) {
                 ra.addFlashAttribute(
@@ -69,8 +64,6 @@ public class ChatsController {
                 return "redirect:/admin/chats/talk/" + chat.getEventId();
             }
 
-            User user = userService
-                    .findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
             eventService.findById(chat.getEventId());
             eventUserService.findByEventIdAndUserId(chat.getEventId(), user.getId());
 
