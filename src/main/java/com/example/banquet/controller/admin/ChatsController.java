@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.banquet.common.DataNotFoundException;
 import com.example.banquet.common.FlashData;
 import com.example.banquet.entity.Chat;
+import com.example.banquet.entity.Event;
 import com.example.banquet.entity.User;
 import com.example.banquet.service.ChatService;
 import com.example.banquet.service.EventService;
@@ -38,17 +39,26 @@ public class ChatsController {
     @GetMapping("/talk/{eventId}")
     public String talk(@PathVariable Integer eventId, Model model, RedirectAttributes ra,
             @AuthenticationPrincipal User user) {
+
         if (!model.containsAttribute(BindingResult.MODEL_KEY_PREFIX + "chat")) {
             model.addAttribute("chat", new Chat());
         }
 
         try {
+            Event event = eventService.findById(eventId);
             model.addAttribute("user", user);
-            model.addAttribute("event", eventService.findById(eventId));
+            model.addAttribute("event", event);
             model.addAttribute("chats", chatService.findAllByOrderByCreatedAt());
+            if (!event.isJoin(user)) {
+                ra.addFlashAttribute("flash", new FlashData().danger("イベントに参加していません"));
+                return "redirect:/admin/events/view/" + eventId;
+            }
+        } catch (DataNotFoundException e) {
+            ra.addFlashAttribute("flash", new FlashData().danger("該当データがありません"));
+            return "redirect:/admin";
         } catch (Exception e) {
-            FlashData flash = new FlashData().danger("処理中にエラーが発生しました");
-            ra.addFlashAttribute("flash", flash);
+            ra.addFlashAttribute("flash", new FlashData().danger("処理中にエラーが発生しました"));
+            return "redirect:/admin/events/view/" + eventId;
         }
 
         return "/admin/chats/talk/talk";
@@ -57,6 +67,7 @@ public class ChatsController {
     @PostMapping(value = "/create")
     public String register(@Validated Chat chat, BindingResult result, Model model,
             RedirectAttributes ra, @AuthenticationPrincipal User user) {
+
         try {
             if (result.hasErrors()) {
                 ra.addFlashAttribute(
@@ -64,18 +75,21 @@ public class ChatsController {
                 return "redirect:/admin/chats/talk/" + chat.getEventId();
             }
 
-            eventService.findById(chat.getEventId());
+            Event event = eventService.findById(chat.getEventId());
+            if (!event.isJoin(user)) {
+                ra.addFlashAttribute("flash", new FlashData().danger("イベントに参加していません"));
+                return "redirect:/admin/events/view/" + chat.getEventId();
+            }
             eventUserService.findByEventIdAndUserId(chat.getEventId(), user.getId());
 
             chat.setUser(user);
             chatService.save(chat);
         } catch (DataNotFoundException e) {
-            FlashData flash = new FlashData().danger("該当データがありません");
-            ra.addFlashAttribute("flash", flash);
+            ra.addFlashAttribute("flash", new FlashData().danger("該当データがありません"));
             return "redirect:/admin";
         } catch (Exception e) {
-            FlashData flash = new FlashData().danger("処理中にエラーが発生しましたあ");
-            ra.addFlashAttribute("flash", flash);
+            ra.addFlashAttribute("flash", new FlashData().danger("処理中にエラーが発生しました"));
+            return "redirect:/admin";
         }
         return "redirect:/admin/chats/talk/" + chat.getEventId();
     }
