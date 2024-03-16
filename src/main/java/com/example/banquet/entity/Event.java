@@ -62,11 +62,6 @@ public class Event extends AbstractEntity {
     private List<User> users;
 
     public Boolean isJoin(User user) {
-        for (User v : users) {
-            if (v.getId().equals(user.getId())) {
-                return true;
-            }
-        }
-        return false;
+        return users.stream().anyMatch(u -> u.getId().equals(user.getId()));
     }
 }
